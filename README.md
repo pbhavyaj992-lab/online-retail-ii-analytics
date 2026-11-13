@@ -77,3 +77,10 @@ RFM built on 779425 sales lines with a known CustomerID; reference date (max Inv
 
 ## Stack
 Power BI, DAX, Python (pandas), SQL, PostgreSQL, Excel. Built by Bhavya Patel.
+
+## What I would do differently
+
+- There is no `.pbix` in this repo. I would build the Power BI report from `powerbi/model.md` and check every measure against `output/kpis.txt`.
+- 22.8% of rows have no CustomerID, so RFM covers identified customers only. I would add a separate view for the unknown-customer revenue instead of silently excluding it from the segments.
+- The file has no return-reason field, so returns can only be measured, not explained. I would say that plainly in the findings rather than letting the GBP 1.46m returns total imply a cause.
+- The Excel workbook is a reconciled workbook, not an interactive dashboard. I would rebuild it with slicers and a timeline so the reader can filter by country, month and segment.
