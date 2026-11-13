@@ -1,0 +1,16 @@
+raw_rows_both_sheets: 1067371
+rows_after_dedupe: 1033036
+exact_duplicates_removed: 34335
+sales_lines: 1007913
+return_or_cancelled_lines: 22497
+gross_sales_revenue_gbp: 20476260.45
+returns_value_gbp: -1462050.61
+net_revenue_gbp: 19014209.84
+invoices: 53628
+customers: 5942
+countries: 43
+products_stockcodes: 5305
+missing_customerid_rows: 235151
+missing_customerid_pct: 22.76
+date_min: 2009-12-01
+date_max: 2011-12-09

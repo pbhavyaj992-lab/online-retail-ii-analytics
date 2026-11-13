@@ -1,0 +1,13 @@
+ONLINE RETAIL II — RECONCILIATION (computed from the real UCI file, 2026-11-13)
+Sheet Year 2009-2010: 525461 rows; Sheet Year 2010-2011: 541910 rows; total raw: 1067371
+Exact duplicate rows removed (same invoice line on both sheets, 1-9 Dec 2010): 34335
+Rows after dedupe: 1033036
+Gross sales revenue (positive-qty, non-cancelled, UnitPrice>0): GBP 20,476,260.45
+Returns/cancelled lines value: GBP -1,462,050.61
+Net revenue (all rows with UnitPrice>0): GBP 19,014,209.84
+Check: gross + returns = net (within rounding).
+Per-file scope:
+monthly_revenue.csv and country_summary.csv: GROSS sales only (positive-qty, non-cancelled, UnitPrice>0); the revenue column is gross_sales_revenue_gbp and both files sum to gross sales GBP 20,476,260.45, before returns.
+top_products.csv: top 30 STOCKABLE products by revenue. Non-product lines (StockCodes M, DOT, POST, B, C2, D, AMAZONFEE, BANK CHARGES, ADJUST, S; carriage/packing charges; gift vouchers) are excluded from this ranking only and still count in gross sales. Row 1 is REGENCY CAKESTAND 3 TIER, GBP 330,590.32.
+returns_by_country.csv: ALL 36 countries with returns/cancellations; return_value_gbp sums to total returns GBP -1,462,050.61.
+RFM built on 779425 sales lines with a known CustomerID; reference date (max InvoiceDate) = 2011-12-09.

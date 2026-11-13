@@ -1,0 +1,79 @@
+# Online Retail II Analytics
+
+**Dataset:** Online Retail II (UCI Machine Learning Repository, dataset 502)
+**Scale:** 1,067,371 rows across the two sheets; 1,033,036 rows after removing 34,335 exact duplicates.
+
+## Business question
+Which customers are worth retaining (RFM), which products drive repeat revenue, and what should next quarter's stock focus be?
+
+## Licence and commercial use
+**Licence: CC BY 4.0, confirmed via UCI (dataset 502). Sellable with attribution.**
+Credit: Chen, D. (2012). Online Retail II [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5CG6D. Keep the attribution in any reuse.
+
+## Data source and how to reproduce
+Source: UCI Machine Learning Repository, dataset 502 — https://archive.ics.uci.edu/dataset/502/online+retail+ii
+Downloaded WITHOUT a login, direct from UCI: https://archive.ics.uci.edu/ml/machine-learning-databases/00502/online_retail_II.xlsx (43.5 MB, two sheets: Year 2009-2010 and Year 2010-2011). The file is already in `data/raw/`. Re-run `python3 scripts/01_clean_analyse.py` to reproduce every output.
+
+**Status: REAL DATA PROCESSED.** Every figure below was computed from the real
+dataset by `scripts/01_clean_analyse.py`. Nothing is fabricated. See
+`output/reconciliation.txt` for the full reconciliation.
+
+## Key figures (from `output/kpis.txt`)
+- raw_rows_both_sheets: 1067371
+- rows_after_dedupe: 1033036
+- exact_duplicates_removed: 34335
+- sales_lines: 1007913
+- return_or_cancelled_lines: 22497
+- gross_sales_revenue_gbp: 20476260.45
+- returns_value_gbp: -1462050.61
+- net_revenue_gbp: 19014209.84
+- invoices: 53628
+- customers: 5942
+- countries: 43
+- products_stockcodes: 5305
+- missing_customerid_rows: 235151
+- missing_customerid_pct: 22.76
+- date_min: 2009-12-01
+- date_max: 2011-12-09
+
+## What the data actually says
+- Champions are the business: 847 customers (14.4% of customers with a known ID) produced GBP 10,748,504.66, 52.5% of gross sales revenue. Retention spend belongs here first.
+- Gross sales revenue is GBP 20,476,260.45; returns and cancellations take GBP 1,462,050.61 back, leaving net revenue of GBP 19,014,209.84.
+- The UK is 85% of revenue (GBP 17,410,196.12). The next market, EIRE, is GBP 658,767.31 — international expansion is a rounding error today.
+- 22.8% of rows have no CustomerID (235,151 rows), so RFM covers identified customers only; the revenue in rfm_segments.csv is lower than gross revenue for exactly that reason.
+- Top product by revenue is the REGENCY CAKESTAND 3 TIER (GBP 330,590.32); the WHITE HANGING HEART T-LIGHT HOLDER sold 94,142 units. Stock depth belongs on proven repeat sellers, not on the long tail. top_products.csv lists stockable products only: non-product lines (Manual, DOTCOM POSTAGE, POSTAGE and other fees/charges) are excluded from that ranking, though they still count in gross sales — see Reconciliation.
+- 2,589 customers sit in 'Lost / low value'. A win-back test on the 248 'At risk (was frequent)' customers is cheaper and more likely to pay than chasing the lost group.
+
+## The decision this answers
+Protect the 847 Champions with a retention offer, fix the returns flow (GBP 1.46m), and put next quarter's stock budget on the top 30 proven products in top_products.csv.
+
+## Reconciliation
+```
+ONLINE RETAIL II — RECONCILIATION (computed from the real UCI file, 2026-11-13)
+Sheet Year 2009-2010: 525461 rows; Sheet Year 2010-2011: 541910 rows; total raw: 1067371
+Exact duplicate rows removed (same invoice line on both sheets, 1-9 Dec 2010): 34335
+Rows after dedupe: 1033036
+Gross sales revenue (positive-qty, non-cancelled, UnitPrice>0): GBP 20,476,260.45
+Returns/cancelled lines value: GBP -1,462,050.61
+Net revenue (all rows with UnitPrice>0): GBP 19,014,209.84
+Check: gross + returns = net (within rounding).
+Per-file scope:
+monthly_revenue.csv and country_summary.csv: GROSS sales only (positive-qty, non-cancelled, UnitPrice>0); the revenue column is gross_sales_revenue_gbp and both files sum to gross sales GBP 20,476,260.45, before returns.
+top_products.csv: top 30 STOCKABLE products by revenue. Non-product lines (StockCodes M, DOT, POST, B, C2, D, AMAZONFEE, BANK CHARGES, ADJUST, S; carriage/packing charges; gift vouchers) are excluded from this ranking only and still count in gross sales. Row 1 is REGENCY CAKESTAND 3 TIER, GBP 330,590.32.
+returns_by_country.csv: ALL 36 countries with returns/cancellations; return_value_gbp sums to total returns GBP -1,462,050.61.
+RFM built on 779425 sales lines with a known CustomerID; reference date (max InvoiceDate) = 2011-12-09.
+```
+
+## What is in this folder
+- `data/raw/` — the real source file(s), as downloaded.
+- `data/clean/` — cleaned fact table / sample produced by the pipeline.
+- `data/data_dictionary.md` — column meanings, grains, caveats.
+- `scripts/01_clean_analyse.py` — the full reproducible pipeline (clean + analyse + reconcile).
+- `sql/schema.sql` — PostgreSQL schema for the same model.
+- `sql/analysis_queries.sql` — the key analytical queries in SQL.
+- `powerbi/model.md` — star schema, DAX measures and page plan (no .pbix in this repo; build it from this document).
+- `excel/` — Excel dashboard workbook built from the real aggregates.
+- `output/` — aggregate CSVs, `kpis.txt`, `reconciliation.txt`.
+
+## Stack
+Power BI, DAX, Python (pandas), SQL, PostgreSQL, Excel. Built by Bhavya Patel.
